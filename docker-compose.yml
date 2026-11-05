@@ -1,0 +1,61 @@
+﻿services:
+
+  # Standalone Authentication API
+  auth_service:
+    build: .
+    container_name: shopease_auth_service_standalone
+
+    ports:
+      - "8011:8000"
+
+    environment:
+      APP_NAME: ${APP_NAME}
+      APP_ENV: ${APP_ENV}
+
+      DB_HOST: auth_mysql
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ALGORITHM: ${JWT_ALGORITHM}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
+
+    depends_on:
+      auth_mysql:
+        condition: service_healthy
+
+    restart: unless-stopped
+
+
+  # Dedicated MySQL database for Authentication Service
+  auth_mysql:
+    image: mysql:8.0
+    container_name: shopease_auth_mysql_standalone
+
+    ports:
+      - "3310:3306"
+
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+    volumes:
+      - shopease_auth_mysql_data:/var/lib/mysql
+
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot --password=$${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+    restart: unless-stopped
+
+
+# Persistent MySQL storage
+volumes:
+  shopease_auth_mysql_data:
