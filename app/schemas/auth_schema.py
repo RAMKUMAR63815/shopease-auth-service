@@ -13,7 +13,7 @@ from pydantic import (
 
 # Reusable password security validation
 def validate_strong_password(value: str) -> str:
-    if len(value.encode("utf-8")) > 72:
+    if len(value.encode("utf-8")) > 72: #converts the password string into UTF-8 bytes
         raise ValueError("Password must not exceed 72 UTF-8 bytes")
 
     if not re.search(r"[A-Z]", value):

@@ -48,8 +48,8 @@ bearer_scheme = HTTPBearer(auto_error=False)
 
 def get_current_user(
     credentials: Annotated[
-        HTTPAuthorizationCredentials | None,
-        Depends(bearer_scheme),
+        HTTPAuthorizationCredentials | None, #what type of result we expect.
+        Depends(bearer_scheme), #who provides that result.
     ],
     db: Annotated[Session, Depends(get_db)],
 ) -> User:

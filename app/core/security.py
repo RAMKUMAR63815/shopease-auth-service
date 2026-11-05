@@ -1,9 +1,7 @@
 ﻿from datetime import datetime, timedelta, timezone
-
 import jwt
 from passlib.context import CryptContext
 from jwt.exceptions import InvalidTokenError
-
 from app.core.config import settings
 
 
